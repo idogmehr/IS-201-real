@@ -1,0 +1,35 @@
+
+.bodystuff {
+    list-style-position: inside;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  text-align: center;
+}
+.imgstyle {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+.ol {
+  text-align: left;
+}
+
+  .video-container {
+    
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  .centered-list ol {
+    list-style-position: inside; 
+    padding-left: 0;             
+    text-align: center;          
+  }
+.centerit{
+    text-align: center;
+}
+  .backgroundc{
+    background-color: antiquewhite;
+  }
+
+ 

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mastermind Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #board {
+      width: 300px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pegs, .feedback {
+      display: flex;
+      gap: 5px;
+    }
+
+    .peg, .feedback-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid #333;
+    }
+
+    .peg {
+      cursor: pointer;
+      border: 2px solid white;
+    }
+
+    #colors {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .color-option {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: lightgreen;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎯 Mastermind</h1>
+<p>Guess the color code (4 pegs)</p>
+
+<div id="board"></div>
+
+<div id="colors"></div>
+<button onclick="submitGuess()">Submit Guess</button>
+
+<div id="message"></div>
+
+<script>
+  const colors = ['red', 'green', 'blue', 'yellow', 'purple', 'orange'];
+  const code = [];
+  const board = document.getElementById('board');
+  const colorContainer = document.getElementById('colors');
+  const message = document.getElementById('message');
+  let currentGuess = [];
+  let guessRow;
+
+  // Create secret code
+  for (let i = 0; i < 4; i++) {
+    code.push(colors[Math.floor(Math.random() * colors.length)]);
+  }
+
+  // Show color choices
+  colors.forEach(color => {
+    const div = document.createElement('div');
+    div.className = 'color-option';
+    div.style.background = color;
+    div.onclick = () => addPeg(color);
+    colorContainer.appendChild(div);
+  });
+
+  function addPeg(color) {
+    if (currentGuess.length >= 4) return;
+    const peg = document.createElement('div');
+    peg.className = 'peg';
+    peg.style.background = color;
+    currentGuess.push(color);
+    guessRow.querySelector('.pegs').appendChild(peg);
+  }
+
+  function submitGuess() {
+    if (currentGuess.length !== 4) {
+      alert('Pick 4 colors!');
+      return;
+    }
+
+    const feedback = checkGuess(currentGuess, code);
+    const feedbackDiv = guessRow.querySelector('.feedback');
+    feedback.black.forEach(() => {
+      const dot = document.createElement('div');
+      dot.className = 'feedback-dot';
+      dot.style.background = 'black';
+      feedbackDiv.appendChild(dot);
+    });
+    feedback.white.forEach(() => {
+      const dot = document.createElement('div');
+      dot.className = 'feedback-dot';
+      dot.style.background = 'white';
+      feedbackDiv.appendChild(dot);
+    });
+
+    if (feedback.black.length === 4) {
+      message.textContent = '🎉 You cracked the code!';
+      colorContainer.innerHTML = '';
+    } else {
+      newRow();
+    }
+
+    currentGuess = [];
+  }
+
+  function checkGuess(guess, secret) {
+    const secretCopy = [...secret];
+    const guessCopy = [...guess];
+    const result = { black: [], white: [] };
+
+    // Check for correct position and color
+    for (let i = 0; i < 4; i++) {
+      if (guess[i] === secret[i]) {
+        result.black.push(i);
+        secretCopy[i] = null;
+        guessCopy[i] = null;
+      }
+    }
+
+    // Check for correct color, wrong position
+    for (let i = 0; i < 4; i++) {
+      if (guessCopy[i] && secretCopy.includes(guessCopy[i])) {
+        result.white.push(i);
+        secretCopy[secretCopy.indexOf(guessCopy[i])] = null;
+      }
+    }
+
+    return result;
+  }
+
+  function newRow() {
+    guessRow = document.createElement('div');
+    guessRow.className = 'row';
+
+    const pegDiv = document.createElement('div');
+    pegDiv.className = 'pegs';
+
+    const feedbackDiv = document.createElement('div');
+    feedbackDiv.className = 'feedback';
+
+    guessRow.appendChild(pegDiv);
+    guessRow.appendChild(feedbackDiv);
+    board.appendChild(guessRow);
+  }
+
+  // Start first row
+  newRow();
+</script>
+
+</body>
+</html>
